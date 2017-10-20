@@ -1,0 +1,198 @@
+// IsothermBmp.cpp : implementation file
+//
+
+#include "stdafx.h"
+#include "AcousticTherm.h"
+#include "IsothermBmp.h"
+#include "commonFile.h"
+#include <GL/GLAux.h>
+
+
+// CIsothermBmp
+
+IMPLEMENT_DYNAMIC(CIsothermBmp, CStatic)
+
+CIsothermBmp::CIsothermBmp()
+{
+	
+}
+
+CIsothermBmp::~CIsothermBmp()
+{
+
+	//释放资源
+	wglMakeCurrent(NULL,NULL);
+	wglDeleteContext(m_hRC);
+	if (m_pDC)
+	{
+		delete m_pDC;
+		m_pDC = NULL;
+	}
+	
+}
+
+
+BEGIN_MESSAGE_MAP(CIsothermBmp, CStatic)
+//	ON_WM_SIZE()
+END_MESSAGE_MAP()
+
+// CIsothermBmp message handlers
+void CIsothermBmp::DisplayIsotherm(WPARAM wparam, LPARAM lparam,CClientDC* pDC,CRect rRect)
+{
+	CRect rRectClient	;
+	GetClientRect(rRectClient);
+
+	wglMakeCurrent(m_pDC->m_hDC,m_hRC);//使 RC 与当前 DC 相关联
+	glClear(GL_COLOR_BUFFER_BIT);
+	// 绘制场景
+	glViewport(0,0,rRectClient.Width(),rRectClient.Height());
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluOrtho2D(0.0,rRectClient.Width(),0,rRectClient.Height());
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glPushMatrix();
+
+	Draw(m_pDC,wparam,lparam,rRectClient);
+
+	glFlush();
+	glPopMatrix();
+	// 交换缓冲区
+	SwapBuffers(wglGetCurrentDC());
+	wglMakeCurrent(m_pDC->m_hDC,NULL);//释放 RC，以便其它 DC 进行绘图
+}
+
+
+void CIsothermBmp::Draw(CDC* pDC, WPARAM wparam, LPARAM lparam,CRect rRect)
+{
+//	int OldMode = pDC->SetMapMode(MM_LOENGLISH);
+
+	CRect rClientRect(rRect);
+	CDC memDC;
+	memDC.CreateCompatibleDC(pDC);
+
+	if(m_Bmp.GetSafeHandle()==NULL)
+		m_Bmp.CreateCompatibleBitmap(pDC,rClientRect.Width(),rClientRect.Height());
+
+	CBitmap *pOldBmp;
+	pOldBmp=memDC.SelectObject(&m_Bmp);
+
+	CBrush backBrush(RED_COLOR);
+	memDC.FillRect(rClientRect,&backBrush);  //填充显示区域背景色
+
+	int nBkMode=memDC.SetBkMode(TRANSPARENT);
+
+	/*****************************显示内容***********************************/
+	DrawCurve(&memDC,rClientRect,wparam,lparam);
+	/************************************************************************/
+
+	pDC->BitBlt(0,0,rClientRect.Width(),rClientRect.Height(),&memDC,0,0,SRCCOPY);
+	memDC.SetBkMode(nBkMode);
+	memDC.SelectObject(pOldBmp);
+//	pDC->SetMapMode(OldMode);
+}
+
+
+void CIsothermBmp::DrawCurve(CDC* pDC, CRect rRect, WPARAM wparam, LPARAM lparam)
+{
+	m_contour.DrawContour(pDC,rRect,wparam,lparam);
+}
+
+
+void CIsothermBmp::DoDataExchange(CDataExchange* pDX)
+{
+	// TODO: Add your specialized code here and/or call the base class
+
+	CStatic::DoDataExchange(pDX);
+}
+
+
+BOOL CIsothermBmp::SetDCPixelFormat(CDC*pDC)
+{
+	static PIXELFORMATDESCRIPTOR pfd = {
+		sizeof(PIXELFORMATDESCRIPTOR),//结构大小
+		1,//结构的版本
+		PFD_DRAW_TO_WINDOW |         // 在窗口(而不是位图)中绘图
+		PFD_SUPPORT_OPENGL |         // 支持在窗口中进行OpenGL调用
+		PFD_DOUBLEBUFFER,           // 双缓冲模式
+		PFD_TYPE_RGBA,            //RGBA颜色模式
+		32,                  // 需要32位颜色
+		0, 0, 0, 0, 0, 0,           //不用于选择模式
+		0,                  // No Alpha Buffer
+		0,                  // Shift Bit Ignored
+		0,                  // No Accumulation Buffer
+		0, 0, 0, 0,              // Accumulation Bits Ignored
+		16,                  // 深度缓冲区的大小
+		1,                  // No Stencil Buffer
+		0,                  // No Auxiliary Buffer
+		PFD_MAIN_PLANE,            // Main Drawing Layer
+		0,                  // Reserved
+		0, 0, 0                // Layer Masks Ignored
+	};
+	int nPixelFormat = ChoosePixelFormat(pDC->GetSafeHdc(),&pfd);
+	if (nPixelFormat == 0)
+	{
+		return FALSE;
+	}
+
+	return SetPixelFormat(pDC->GetSafeHdc(),nPixelFormat,&pfd);
+}
+
+
+BOOL CIsothermBmp::InitOpenGL(CWnd *pWnd)
+{
+	//////////////////////////////创建OpenGL上下文///////////////////////////////////////////////
+	//创建DC
+	m_pDC = new CClientDC(this);
+	ASSERT(m_pDC!=NULL);
+
+	//选择像素格式
+	if (!SetDCPixelFormat(m_pDC))
+	{
+		return FALSE;
+	}
+	//创建渲染环境，并使其成为当前渲染环境
+	m_hRC = wglCreateContext(m_pDC->GetSafeHdc());
+	if (m_hRC == NULL)
+	{
+		return FALSE;
+	}
+	if (wglMakeCurrent(m_pDC->GetSafeHdc(),m_hRC) == FALSE)
+	{
+		return FALSE;
+	}
+	return TRUE;
+}
+
+//void CIsothermBmp::OnSize(UINT nType, int cx, int cy)
+//{
+//	CStatic::OnSize(nType, cx, cy);
+//
+//	// TODO: Add your message handler code here
+//	GLsizei width,height;
+//	GLdouble aspect;
+//	width = cx;
+//	height = cy;
+//
+//	if(cy==0)
+//	{
+//		aspect = (GLdouble)width;
+//	}
+//	else
+//	{
+//		aspect = (GLdouble)width/(GLdouble)height;
+//	}
+//	glViewport(0,0,width,height);
+//	glMatrixMode(GL_PROJECTION);
+//	glLoadIdentity();
+//
+//	//gluPerspective(45.0f,(GLfloat)width/(GLfloat)height,0.1f,100.0f);//透视投影
+//
+//	gluOrtho2D(0.0,width,-10.0,height);
+//	gluOrtho2D(0.0,width-420*XCOFF,-10.0,height);
+//	//	int w = 1000*XCOFF;
+//	//	int h = 640*YCOFF;
+//	//	gluOrtho2D(0.0,w,0.0,h);
+//	glMatrixMode(GL_MODELVIEW);
+//	glLoadIdentity();
+//}

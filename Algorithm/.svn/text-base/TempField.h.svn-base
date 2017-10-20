@@ -1,0 +1,20 @@
+#pragma once
+#include "mat.h"
+#define M 24
+class TempField :
+	public Mat
+{
+public:
+	TempField(void);
+	~TempField(void);
+	float s[M][M],t[M][M],d[M][M];
+	float z;
+	void lsm();
+	void GetT(float tei[],int m1);
+	int n,m;
+	void Sets(const float x[][M],int n1,int m1);
+	void Sett(float** x,int n1,int m1);
+//	void Sett(float x[],int n1);
+	float tt[M][M],ti[M][M],ts[M][M];
+};
+

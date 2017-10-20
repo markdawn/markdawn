@@ -1,0 +1,14 @@
+#pragma once
+#include "xcorr.h"
+//计算路径平均温度
+class CPathAverageT
+{
+public:
+	CPathAverageT(void);
+	~CPathAverageT(void);
+	// 相关性计算
+	CXcorr m_xcorr;
+	// 计算路径平均温度
+	float CalPerPathAverageT(int* masterData, int* slaveData, UINT length);
+};
+

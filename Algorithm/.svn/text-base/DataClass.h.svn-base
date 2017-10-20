@@ -1,0 +1,27 @@
+#pragma once
+#include "..\commonFile.h"
+
+
+class DataClass
+{
+public:
+	DataClass(void);
+	~DataClass(void);
+	void ReadData(int data[]);
+	void GetData(float data[]);
+	void Filter();
+	void Nto1(int Nbegin,int Nend);
+	int Init(bool FF,bool NF,bool VF,int number,int SR);
+	void SetFilterPara(float a1,float a2,float b1,float b2,float b3);
+protected:
+private:
+	unsigned int Nlength;
+	float Rdata[N_DATALENTH];
+	float Data[N_DATALENTH];
+	int SampRate;
+	bool Nto1Flag,VoltFlag,FilterFlag;
+	float DataMax;
+	float a[3],b[3];
+	unsigned int Fil_N;
+};
+

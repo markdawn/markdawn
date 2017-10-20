@@ -1,0 +1,26 @@
+#pragma once
+#include "..\commonFile.h"
+#include "fft.h"
+
+class TravelTime: public CFastFourier
+{
+public:
+	TravelTime(void);
+	~TravelTime(void);
+	void CalcTime();
+	void readdata(float** mydata,int n);
+	void Init(unsigned int uSL,unsigned int uSC,unsigned int Sb,float SF,float lV);
+	float GetTime();
+protected:
+private:
+//	int Distance;
+	int SaLen,SaCut,SabLen;
+	float lVal;
+	float Data[2][N_DATALENTH];
+	double xr[N_DATALENTH],xi[N_DATALENTH],yr[N_DATALENTH],yi[N_DATALENTH],zr[N_DATALENTH],zi[N_DATALENTH];
+	int size_x,size_y;
+	int Nlength;
+	float TimeVal;
+	float SampF;
+};
+

@@ -1,0 +1,212 @@
+// PostionBmp.cpp : implementation file
+//
+
+#include "stdafx.h"
+#include "AcousticTherm.h"
+#include "PostionBmp.h"
+#include "commonFile.h"
+
+
+// CPostionBmp
+
+IMPLEMENT_DYNAMIC(CPositionBmp, CStatic)
+
+CPositionBmp::CPositionBmp()
+: m_point(NULL)
+{
+	m_point = new POINT[8];
+	memset(m_point,0,8*sizeof(POINT));
+
+}
+
+CPositionBmp::~CPositionBmp()
+{
+	delete [] m_point;
+}
+
+
+BEGIN_MESSAGE_MAP(CPositionBmp, CStatic)
+END_MESSAGE_MAP()
+
+
+
+// CPostionBmp message handlers
+
+
+
+
+void CPositionBmp::DisplayPosition(WPARAM wparam, LPARAM lparam)
+{
+	CDC *pDC=GetDC();
+	Draw(pDC,wparam,lparam);
+	ReleaseDC(pDC);
+}
+
+
+// 画测点位置
+void CPositionBmp::Draw(CDC* pDC, WPARAM wparam, LPARAM lparam)
+{
+	CRect rClientRect;
+	GetClientRect(rClientRect);
+
+	CDC memDC;
+	memDC.CreateCompatibleDC(pDC);
+
+	if(m_Bmp.GetSafeHandle()==NULL)
+		m_Bmp.CreateCompatibleBitmap(pDC,rClientRect.Width(),rClientRect.Height());
+
+	CBitmap *pOldBmp;
+	pOldBmp=memDC.SelectObject(&m_Bmp);
+
+	CBrush backBrush(SYSTEM_COLOR);
+	memDC.FillRect(rClientRect,&backBrush);  //填充显示区域背景色
+
+	int nBkMode=memDC.SetBkMode(TRANSPARENT);
+
+	/*****************************显示内容***********************************/
+	COLORREF crColor=memDC.SetTextColor(WHITE_COLOR);
+	CString str(_T("BLACK WALL"));
+	memDC.TextOut(rClientRect.Width()/2-20,20,str);
+	memDC.TextOut(rClientRect.Width()/2-20,rClientRect.Height()-40,_T("FRONT WALL"));
+
+	DrawPictureFrame(&memDC,rClientRect,wparam,lparam);
+	DrawAcousticPath(&memDC,m_point);
+	DrawSensorPoint(&memDC,m_point,wparam,lparam);
+	/************************************************************************/
+
+	pDC->BitBlt(0,0,rClientRect.Width(),rClientRect.Height(),&memDC,0,0,SRCCOPY);
+
+	memDC.SetBkMode(nBkMode);
+	memDC.SelectObject(pOldBmp);
+}
+
+
+void CPositionBmp::DrawPictureFrame(CDC* pDC, CRect rRect, WPARAM wparam, LPARAM lparam)
+{
+	UINT OFFSET = 50;
+	UINT iBias=10;//斜线
+
+	CRect rHistimeMainRect ,tempRect;
+	tempRect.left = rRect.left + OFFSET;
+	tempRect.top = rRect.top + OFFSET;
+	tempRect.right = rRect.right - OFFSET;
+	tempRect.bottom = rRect.bottom - OFFSET;	
+
+	//画坐标
+	UINT iRealHight = 0; 
+	UINT iRealWidth=0;
+
+	 iRealWidth = tempRect.Width()/4;//
+	 iRealHight = tempRect.Height()/4; //
+
+	rHistimeMainRect.left = tempRect.left;//计算坐标x系的起点
+	rHistimeMainRect.right=rHistimeMainRect.left + 4*iRealWidth;//计算坐标X系的终点
+	rHistimeMainRect.top = tempRect.top; //坐标Y系的终点
+	rHistimeMainRect.bottom = rHistimeMainRect.top + 4*iRealHight;//坐标Y系的起点
+
+	CPen framePen,*pOldPen;
+	framePen.CreatePen(PS_SOLID,2,WHITE_COLOR);
+	pOldPen=pDC->SelectObject(&framePen);
+
+//	pDC->Rectangle(rHistimeMainRect);
+
+	pDC->MoveTo(rHistimeMainRect.left, rHistimeMainRect.top);
+	pDC->LineTo(rHistimeMainRect.right,rHistimeMainRect.top);
+	pDC->LineTo(rHistimeMainRect.right,rHistimeMainRect.bottom);
+	pDC->LineTo(rHistimeMainRect.left,rHistimeMainRect.bottom);
+	pDC->LineTo(rHistimeMainRect.left,rHistimeMainRect.top);
+
+	pDC->SelectObject(pOldPen);
+
+	GetSensorPoint(m_point,rHistimeMainRect);
+
+}
+
+
+// 获取传感器坐标
+void CPositionBmp::GetSensorPoint(POINT* pPoint, CRect rRect)
+{
+	UINT iRealHight = 0; 
+	UINT iRealWidth=0;
+
+	iRealWidth = rRect.Width()/4;//
+	iRealHight = rRect.Height()/4; //
+
+	pPoint[4].x = rRect.left+iRealWidth;
+	pPoint[4].y = rRect.top;
+	pPoint[5].x = rRect.left+3*iRealWidth;
+	pPoint[5].y = rRect.top;
+
+	pPoint[6].x = rRect.right;
+	pPoint[6].y = rRect.top + iRealHight;
+	pPoint[7].x = rRect.right;
+	pPoint[7].y = rRect.top + 3*iRealHight;
+
+	pPoint[0].x = rRect.left+3*iRealWidth;
+	pPoint[0].y = rRect.bottom;
+	pPoint[1].x = rRect.left+iRealWidth;
+	pPoint[1].y = rRect.bottom;
+
+	pPoint[2].x = rRect.left;
+	pPoint[2].y = rRect.top + 3 * iRealHight;
+	pPoint[3].x = rRect.left;
+	pPoint[3].y = rRect.top + iRealHight;
+}
+
+
+// //画sensor示意图：用一个圆表示
+void CPositionBmp::DrawSensorPoint(CDC* pDC, POINT* pPoint, WPARAM wparam , LPARAM lparam)
+{
+	UINT iRadius = 10;//圆半径
+
+
+	CPen pen(PS_SOLID,1,BLUE_COLOR),*pOldPen;
+	CBrush brush(BLUE_COLOR),*pOldBrush;
+	pOldBrush = pDC->SelectObject(&brush);
+	pOldPen = pDC->SelectObject(&pen);
+	COLORREF oldColor = pDC->SetTextColor(WHITE_COLOR);
+
+	CRect rectTmp;
+	CString strTmp;
+
+	for (UINT i = 0;i < 8; i++)
+	{
+		strTmp.Format(_T("%d"),i+1);
+		rectTmp.left = m_point[i].x - iRadius;
+		rectTmp.top = m_point[i].y - iRadius;
+		rectTmp.right = m_point[i].x + iRadius;
+		rectTmp.bottom = m_point[i].y + iRadius;
+		pDC->Ellipse(rectTmp);
+		CSize sizeError=pDC->GetTextExtent(strTmp);
+		pDC->TextOut(m_point[i].x-sizeError.cx/2,m_point[i].y-sizeError.cy/2,strTmp);
+	}
+
+	pDC->SelectObject(pOldBrush);
+	pDC->SelectObject(pOldPen);
+	pDC->SetTextColor(oldColor);
+}
+
+
+// 画声波传输路径
+void CPositionBmp::DrawAcousticPath(CDC* pDC, POINT* pPoint)
+{
+	CPen pen(PS_DASH,1,RED_COLOR),*pOldPen;
+	pOldPen = pDC->SelectObject(&pen);
+
+	UINT i = 0;
+	UINT j = 0;
+	for(i = 0; i < 8; i++)
+	{
+		for (j = i+1; j < 8; j++)
+		{
+//			if ((pPoint[i].x == pPoint[j].x) ||  (pPoint[i].y == pPoint[j].y))
+//			{
+//				continue;
+//			}
+			pDC->MoveTo(pPoint[i]);
+			pDC->LineTo(pPoint[j]);
+		}
+	}
+
+	pDC->SelectObject(pOldPen);
+}

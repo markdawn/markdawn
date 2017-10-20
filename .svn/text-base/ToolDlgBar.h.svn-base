@@ -1,0 +1,38 @@
+#pragma once
+#include "resource.h"
+#include "led.h"
+
+// CToolDlgBar dialog
+#define LEDTIMER 1000
+class CToolDlgBar : public CDialogBar
+{
+	DECLARE_DYNAMIC(CToolDlgBar)
+
+public:
+	CToolDlgBar();   // standard constructor
+	virtual ~CToolDlgBar();
+
+// Dialog Data
+	enum { IDD = IDD_TOOL_DLGBAR };
+
+protected:
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+
+	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnPaint();
+	afx_msg LONG OnInitDialog ( UINT, LONG );   // <-Add this line.
+	// ±¨¾¯LEDÏÔÊ¾
+	CLed m_ledAlarm;
+	// ¹ÊÕÏLEDÏÔÊ¾
+	CLed m_ledFault;
+	afx_msg void OnTimer(UINT_PTR nIDEvent);
+public:
+	void StartTimer(UINT_PTR nIDEvent ,UINT nElapse);
+	void StopTimer(UINT_PTR nIDEvent );
+	void SetFaultFlag(BOOL bFlag);//¹ÊÕÏ
+	void SetAlarmFlag(BOOL bFlag);//±¨¾¯
+private:
+	BOOL m_bFaultFlag;
+	BOOL m_bAlarmFlag;
+};

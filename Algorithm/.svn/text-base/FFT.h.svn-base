@@ -1,0 +1,18 @@
+#pragma once
+#include "..\commonFile.h"
+
+
+class CFastFourier
+{
+public:
+	CFastFourier(void);
+	~CFastFourier(void);
+	void swap(double* a, double* b);
+	void bitrp(double xreal[], double ximag[], int n);
+	void FFT(double xreal[], double ximag[], int n);
+	void IFFT(double xreal[], double ximag[], int n);
+	void roundoff(double zreal[], int n);
+	void mularray(double xreal[], double ximag[], double yreal[], double yimag[], double zreal[], double zimag[], int n);
+	void fft_conv(double xr[], double xi[], double yr[], double yi[], double zr[], double zi[], int n);
+};
+

@@ -1,0 +1,164 @@
+#include "StdAfx.h"
+#include "DataClass.h"
+#include <math.h>
+
+
+DataClass::DataClass(void)
+{
+	Fil_N=3;
+	a[0]=0;
+	a[1]=0;
+	a[2]=0;
+	b[0]=0;
+	b[1]=0;
+	b[2]=0;
+}
+
+
+DataClass::~DataClass(void)
+{
+
+}
+
+int DataClass::Init(bool FF,bool NF,bool VF,int number,int SR)
+{
+	FilterFlag=FF;
+	if(FilterFlag!=FF)  return 0;
+	Nto1Flag=NF;
+	if(Nto1Flag!=NF)  return 0;
+	VoltFlag=VF;
+	if(VoltFlag!=VF)  return 0;
+	Nlength=number;
+	if(Nlength!=number)  return 0;
+	SampRate=SR;
+	if(SampRate!=SR)  return 0;
+	return 1;
+}
+
+void DataClass::ReadData(int data[])
+{
+	int i=0;
+	float temp;
+	DataMax=0;
+	for(i=0;i<Nlength;i++)
+	{
+		Rdata[i]=data[i]*3.0/4095;
+	}
+}
+
+void DataClass::GetData(float data[])
+{
+	int i;
+	for(i=0;i<Nlength;i++)
+	{
+		data[i]=Data[i];
+	}
+}
+
+void DataClass::Filter()
+// Y[n]=b[0]X[n]+b[1]X[n-1]+b[2]X[n-2]-a[1]Y[n-1]-a[2]Y[n-2]
+{
+/*
+	int Nlen=100;
+	Nlength=Nlen;
+	float input[100]={0.00000000e+00,1.89482898e+00,2.37938030e-01,7.77786260e-01
+		,-1.14581377e-01,1.95105652e+00,-1.90696632e+00,-1.04686657e+00
+		,-1.05708809e+00,5.65559668e-01,-5.87785252e-01,-4.91744985e-01
+		,2.22338887e+00,8.26586628e-01,7.68328526e-01,-1.58778525e+00
+		,1.20759919e+00,-1.27831984e+00,-1.26809832e+00,-1.26492680e+00
+		,9.51056516e-01,1.14549213e+00,-6.19015987e-01,1.63474028e+00
+		,6.34755464e-01,1.00000000e+00,-2.53686850e+00,-1.67062884e-02
+		,-5.56554518e-01,-5.27458145e-01,-9.51056516e-01,6.46892811e-01
+		,2.44366882e+00,-3.39714152e-01,6.94513843e-01,-4.12214748e-01
+		,1.13378451e+00,-2.44462062e+00,-1.04781837e+00,-1.26289004e-01
+		,5.87785252e-01,5.24743212e-02,-1.18482410e-01,2.66490056e+00
+		,4.85328868e-03,4.89434837e-02,-1.78753166e+00,8.40247729e-01
+		,-1.41350854e+00,-1.27679499e+00,4.65489580e-15,1.27679499e+00
+		,1.41350854e+00,-8.40247729e-01,1.78753166e+00,-4.89434837e-02
+		,-4.85328868e-03,-2.66490056e+00,1.18482410e-01,-5.24743212e-02
+		,-5.87785252e-01,1.26289004e-01,1.04781837e+00,2.44462062e+00
+		,-1.13378451e+00,4.12214748e-01,-6.94513843e-01,3.39714152e-01
+		,-2.44366882e+00,-6.46892811e-01,9.51056516e-01,5.27458145e-01
+		,5.56554518e-01,1.67062884e-02,2.53686850e+00,-1.00000000e+00
+		,-6.34755464e-01,-1.63474028e+00,6.19015987e-01,-1.14549213e+00
+		,-9.51056516e-01,1.26492680e+00,1.26809832e+00,1.27831984e+00
+		,-1.20759919e+00,1.58778525e+00,-7.68328526e-01,-8.26586628e-01
+		,-2.22338887e+00,4.91744985e-01,5.87785252e-01,-5.65559668e-01
+		,1.05708809e+00,1.04686657e+00,1.90696632e+00,-1.95105652e+00
+		,1.14581377e-01,-7.77786260e-01,-2.37938030e-01,-1.89482898e+00
+	};*/
+//	float fInput,fOutput;
+	float fIn[N_DATALENTH]={0},fOut[N_DATALENTH]={0};
+	int nIn,nOut;
+	int i,m;
+	float fXn[3]={0},fYn[3]={0};
+	float fSum;
+	i=0;m=0;
+	nIn=0;nOut=0;
+//	fInput=0;fOutput=0;
+	while(m<Nlength)
+	{
+		for(i=Fil_N-1;i>0;i--)
+		{
+			if(i<1)
+			{
+				fXn[i]=0;
+			}
+			else
+			{
+				fXn[i]=fXn[i-1];
+			}
+			if(nOut<i)
+			{
+				fYn[i]=0;
+			}
+			else
+			{
+				fYn[i]=Data[nOut-i];
+			}
+		}
+		fXn[0]=Rdata[m];
+		fYn[0]=0;
+		fIn[nIn]=fXn[0];
+		fSum=0;
+		for(i=0;i<Fil_N;i++)
+		{
+			fSum+=(fXn[i]*b[i]);
+			fSum-=(fYn[i]*a[i]);
+		}
+		Data[nOut]=fSum;
+		nOut++;
+		nIn++;
+		m++;
+//		printf("m=%d,   %lf\n\r",m,fSum);
+	}
+}
+
+void DataClass::Nto1(int Nbegin,int Nend)
+{
+	int i;
+	float ftemp=0;
+	DataMax=0.0;
+	for(i=Nbegin;i<Nend;i++)
+	{
+		ftemp=fabs(Data[i]);
+		if(ftemp>DataMax)
+		{
+			DataMax=ftemp;
+		}
+	}
+	for(i=Nbegin;i<Nend;i++)
+	{
+		Data[i]=Data[i]/DataMax;
+	}
+}
+
+void DataClass::SetFilterPara(float a1,float a2,float b1,float b2,float b3)
+{
+	a[1]=a1;
+	a[2]=a2;
+	b[0]=b1;
+	b[1]=b2;
+	b[2]=b3;
+	Fil_N=3;
+}

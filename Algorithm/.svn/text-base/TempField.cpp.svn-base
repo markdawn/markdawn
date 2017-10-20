@@ -1,0 +1,76 @@
+#include "StdAfx.h"
+#include "TempField.h"
+
+TempField::TempField(void)
+{
+	int i,j;
+	z=20.05;
+	for(i=0;i<M;i++)
+	{
+		for(j=0;j<M;j++)
+		{
+			t[i][j]=0;
+			s[i][j]=0;
+			d[i][j]=0;
+			tt[i][j]=0;
+			ti[i][j]=0;
+			ts[i][j]=0;
+		}
+	}
+}
+
+TempField::~TempField(void)
+{
+}
+
+void TempField::lsm()
+{
+    int i,j,k;
+    T(s,ts,n,m);
+    mul(ts,s,tt,n,m);
+    inv(tt,ti,n,m);
+    mul(ti,ts,tt,n,m);
+    mul(tt,t,d,n,m);
+    /*
+    printf("d=\r\n");
+    for(i=0;i<24;i++)
+    {
+        printf("d=%f\r\n",d[i][0]);
+        printf("\r\n");
+    }*/
+}
+
+void TempField::GetT(float tei[],int m1)
+{
+    int i;
+    for(i=0;i<m1;i++)
+    {
+        tei[i]=1/((d[i][0]*z)*(d[i][0]*z));
+    }
+}
+
+void TempField::Sets(const float x[][M],int n1,int m1)
+{
+    int i,j;
+    n=n1;
+    m=m1;
+    for(i=0;i<n1;i++)
+        for(j=0;j<m1;j++)
+            s[i][j]=x[i][j]/100;
+}
+
+/*
+void TempField::Sett(float x[],int n1)
+{
+    int i;
+    for(i=0;i<n1;i++)
+        t[i][0]=x[i];
+}
+*/
+void TempField::Sett(float** x,int n1,int m1)
+{
+    int i,j;
+    for(i=0;i<n1;i++)
+        for(j=0;j<m1;j++)
+            t[j][i]=x[i][j];
+}

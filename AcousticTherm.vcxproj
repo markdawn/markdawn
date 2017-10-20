@@ -1,0 +1,263 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{38A57529-C929-49D9-B1BA-9ABF151791DC}</ProjectGuid>
+    <RootNamespace>AcousticTherm</RootNamespace>
+    <Keyword>MFCProj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+    <UseOfMfc>Dynamic</UseOfMfc>
+    <PlatformToolset>v100</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+    <UseOfMfc>Dynamic</UseOfMfc>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>C:\Program Files\MySQL\MySQL Server 5.6\include;E:\yqf\C++\AcousticTherm-0723\AcousticTherm-0723\Algorithm;$(IncludePath);$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSdkDir)include;$(FrameworkSDKDir)\include;C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\Include</IncludePath>
+    <LibraryPath>C:\Program Files\MySQL\MySQL Server 5.6\lib\debug;$(LibraryPath);$(VCInstallDir)lib;$(VCInstallDir)atlmfc\lib;$(WindowsSdkDir)lib;$(FrameworkSDKDir)\lib</LibraryPath>
+    <ExecutablePath>$(VCInstallDir)bin;$(WindowsSdkDir)bin\NETFX 4.0 Tools;$(WindowsSdkDir)bin;$(VSInstallDir)Common7\Tools\bin;$(VSInstallDir)Common7\tools;$(VSInstallDir)Common7\ide;$(ProgramFiles)\HTML Help Workshop;$(FrameworkSDKDir)\bin;$(MSBuildToolsPath32);$(VSInstallDir);$(SystemRoot)\SysWow64;$(FxCopDir);$(PATH);$(ExecutablePath)</ExecutablePath>
+    <ReferencePath>$(VCInstallDir)atlmfc\lib;$(VCInstallDir)lib</ReferencePath>
+    <SourcePath>$(VCInstallDir)atlmfc\src\mfc;$(VCInstallDir)atlmfc\src\mfcm;$(VCInstallDir)atlmfc\src\atl;$(VCInstallDir)crt\src;</SourcePath>
+    <ExcludePath>$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSdkDir)include;$(FrameworkSDKDir)\include;$(MSBuildToolsPath32);$(VCInstallDir)atlmfc\lib;$(VCInstallDir)lib;</ExcludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <IncludePath>C:\Program Files\MySQL\MySQL Server 5.6\include;$(IncludePath)</IncludePath>
+    <EmbedManifest>false</EmbedManifest>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>CRC16.LIB;opengl32.lib;glu32.lib;GlAux.Lib;MSVCRTD.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <Midl>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <ValidateAllParameters>true</ValidateAllParameters>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0804</Culture>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>..\Include\CRC16.LIB;opengl32.lib;glu32.lib;GlAux.Lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <Midl>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <ValidateAllParameters>true</ValidateAllParameters>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0804</Culture>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <None Include="ReadMe.txt" />
+    <None Include="res\AcousticTherm.ico" />
+    <None Include="res\AcousticTherm.rc2" />
+    <None Include="res\AcousticThermDoc.ico" />
+    <None Include="res\ArmModule .bmp" />
+    <None Include="res\ArmModule1.bmp" />
+    <None Include="res\ArmModule2.bmp" />
+    <None Include="res\Boiler.bmp" />
+    <None Include="res\Color.bmp" />
+    <None Include="res\leds.bmp" />
+    <None Include="res\Logo.bmp" />
+    <None Include="res\Logo.png" />
+    <None Include="res\MainDis.bmp" />
+    <None Include="res\MianLed.bmp" />
+    <None Include="res\Valve.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="AcousticTherm.h" />
+    <ClInclude Include="AcousticThermDoc.h" />
+    <ClInclude Include="AcousticThermView.h" />
+    <ClInclude Include="Algorithm\ArmModule.h" />
+    <ClInclude Include="Algorithm\CalTime.h" />
+    <ClInclude Include="Algorithm\Communication.h" />
+    <ClInclude Include="Algorithm\DataClass.h" />
+    <ClInclude Include="Algorithm\eqation.h" />
+    <ClInclude Include="Algorithm\FlightTime.h" />
+    <ClInclude Include="Algorithm\interpolate.h" />
+    <ClInclude Include="Algorithm\SoundAndReceive.h" />
+    <ClInclude Include="Algorithm\TempField5.h" />
+    <ClInclude Include="Algorithm\WaveFilter.h" />
+    <ClInclude Include="AreaAvrgTemperatureBmp.h" />
+    <ClInclude Include="AreaAvrgTemperatureView.h" />
+    <ClInclude Include="ArmModule2Bmp.h" />
+    <ClInclude Include="ArmModuleBmp.h" />
+    <ClInclude Include="BoilerBmp.h" />
+    <ClInclude Include="commonFile.h" />
+    <ClInclude Include="Contour.h" />
+    <ClInclude Include="ContourDraw.h" />
+    <ClInclude Include="ContourTrace.h" />
+    <ClInclude Include="ContourValues.h" />
+    <ClInclude Include="DatabaseOperate.h" />
+    <ClInclude Include="DisAreaAvrgTInfoView.h" />
+    <ClInclude Include="ExitDlg.h" />
+    <ClInclude Include="GetIsothremData.h" />
+    <ClInclude Include="GridCtrlFile\CellRange.h" />
+    <ClInclude Include="GridCtrlFile\GridCell.h" />
+    <ClInclude Include="GridCtrlFile\GridCellBase.h" />
+    <ClInclude Include="GridCtrlFile\GridCtrl.h" />
+    <ClInclude Include="GridCtrlFile\GridDropTarget.h" />
+    <ClInclude Include="GridCtrlFile\InPlaceEdit.h" />
+    <ClInclude Include="GridCtrlFile\MemDCEx.h" />
+    <ClInclude Include="GridCtrlFile\TitleTip.h" />
+    <ClInclude Include="IsothermBmp.h" />
+    <ClInclude Include="IsothermView.h" />
+    <ClInclude Include="LeakBmp.h" />
+    <ClInclude Include="LeakView.h" />
+    <ClInclude Include="Led.h" />
+    <ClInclude Include="LogoBmp.h" />
+    <ClInclude Include="LookUpColor.h" />
+    <ClInclude Include="MainDisBmp.h" />
+    <ClInclude Include="MainDIsInfoView.h" />
+    <ClInclude Include="MainFrm.h" />
+    <ClInclude Include="PassWordDlg.h" />
+    <ClInclude Include="PositionView.h" />
+    <ClInclude Include="PostionBmp.h" />
+    <ClInclude Include="RebuildAreaT.h" />
+    <ClInclude Include="Resource.h" />
+    <ClInclude Include="SelDateTimeDlg.h" />
+    <ClInclude Include="SelTTrendTimeDlg.h" />
+    <ClInclude Include="SetAreaTValve.h" />
+    <ClInclude Include="SetIpAddrDlg.h" />
+    <ClInclude Include="SignalTimeBmp.h" />
+    <ClInclude Include="SignalTimeView.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="SysSetDlg.h" />
+    <ClInclude Include="SysSetTap.h" />
+    <ClInclude Include="TTrendBmp.h" />
+    <ClInclude Include="TTrendView.h" />
+    <ClInclude Include="VavleBmp.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="AcousticTherm.cpp" />
+    <ClCompile Include="AcousticThermDoc.cpp" />
+    <ClCompile Include="AcousticThermView.cpp" />
+    <ClCompile Include="Algorithm\ArmModule.cpp" />
+    <ClCompile Include="Algorithm\CalTime.cpp" />
+    <ClCompile Include="Algorithm\Communication.cpp" />
+    <ClCompile Include="Algorithm\DataClass.cpp" />
+    <ClCompile Include="Algorithm\eqation.cpp" />
+    <ClCompile Include="Algorithm\FlightTime.cpp" />
+    <ClCompile Include="Algorithm\interpolate.cpp" />
+    <ClCompile Include="Algorithm\SoundAndReceive.cpp" />
+    <ClCompile Include="Algorithm\TempField5.cpp" />
+    <ClCompile Include="Algorithm\WaveFilter.cpp" />
+    <ClCompile Include="AreaAvrgTemperatureBmp.cpp" />
+    <ClCompile Include="AreaAvrgTemperatureView.cpp" />
+    <ClCompile Include="ArmModule2Bmp.cpp" />
+    <ClCompile Include="ArmModuleBmp.cpp" />
+    <ClCompile Include="BoilerBmp.cpp" />
+    <ClCompile Include="Contour.cpp" />
+    <ClCompile Include="ContourDraw.cpp" />
+    <ClCompile Include="ContourTrace.cpp" />
+    <ClCompile Include="ContourValues.cpp" />
+    <ClCompile Include="DatabaseOperate.cpp" />
+    <ClCompile Include="DisAreaAvrgTInfoView.cpp" />
+    <ClCompile Include="ExitDlg.cpp" />
+    <ClCompile Include="GetIsothremData.cpp" />
+    <ClCompile Include="GridCtrlFile\GridCell.cpp" />
+    <ClCompile Include="GridCtrlFile\GridCellBase.cpp" />
+    <ClCompile Include="GridCtrlFile\GridCtrl.cpp" />
+    <ClCompile Include="GridCtrlFile\GridDropTarget.cpp" />
+    <ClCompile Include="GridCtrlFile\InPlaceEdit.cpp" />
+    <ClCompile Include="GridCtrlFile\TitleTip.cpp" />
+    <ClCompile Include="IsothermBmp.cpp" />
+    <ClCompile Include="IsothermView.cpp" />
+    <ClCompile Include="LeakBmp.cpp" />
+    <ClCompile Include="LeakView.cpp" />
+    <ClCompile Include="Led.cpp" />
+    <ClCompile Include="LogoBmp.cpp" />
+    <ClCompile Include="LookUpColor.cpp" />
+    <ClCompile Include="MainDisBmp.cpp" />
+    <ClCompile Include="MainDIsInfoView.cpp" />
+    <ClCompile Include="MainFrm.cpp" />
+    <ClCompile Include="PassWordDlg.cpp" />
+    <ClCompile Include="PositionView.cpp" />
+    <ClCompile Include="PostionBmp.cpp" />
+    <ClCompile Include="RebuildAreaT.cpp" />
+    <ClCompile Include="SelDateTimeDlg.cpp" />
+    <ClCompile Include="SelTTrendTimeDlg.cpp" />
+    <ClCompile Include="SetAreaTValve.cpp" />
+    <ClCompile Include="SetIpAddrDlg.cpp" />
+    <ClCompile Include="SignalTimeBmp.cpp" />
+    <ClCompile Include="SignalTimeView.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="SysSetDlg.cpp" />
+    <ClCompile Include="SysSetTap.cpp" />
+    <ClCompile Include="TTrendBmp.cpp" />
+    <ClCompile Include="TTrendView.cpp" />
+    <ClCompile Include="VavleBmp.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="AcousticTherm.rc" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties RESOURCE_FILE="AcousticTherm.rc" />
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>

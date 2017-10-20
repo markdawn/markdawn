@@ -1,0 +1,188 @@
+#pragma once
+
+#define INTERFACE_NUM          8//界面个数
+
+//#define WM_START_MSG				 WM_USER + 100
+#define WM_GUIDISPLAY_MSG   WM_USER + 101
+//#define  WM_PROCESS_MSG       WM_USER + 102
+//#define  WM_DATABASE_MSG     WM_USER + 103
+//#define  WM_CALGRID_MSG     WM_USER + 104
+//#define WM_UPDATE_MSG          WM_USER + 105  //update the new message to main thread
+#define  WM_STARTWORK_MSG  WM_USER + 106 
+
+#define WM_MAINDIS_MSG               WM_USER + 200
+#define  WM_ISOTHERM_MSG     WM_USER + 201
+#define  WM_AREAARVGT_MSG  WM_USER + 202
+#define  WM_TTREND_MSG          WM_USER + 203
+#define  WM_AREATINFO_MSG    WM_USER + 204
+#define  WM_POSITION_MSG       WM_USER + 205
+#define  WM_TIME_MSG                WM_USER + 206
+#define  WM_LEAK_MSG               WM_USER + 207
+
+
+#define BACKGROUND_COLOR     RGB(149,149,149)
+#define BLACK_COLOR					RGB(0,0,0)
+#define RED_COLOR							RGB(255,0,0)
+#define WHITE_COLOR                    RGB(242,242,242)
+#define BLUE_COLOR                      RGB(0,0,255)
+#define  LIGHT_BLUE_COLOR         RGB(8,140,156)
+#define  GREEN_COLOR                 RGB(8,165,8)
+
+#define  GREEN_COLOR_1                 RGB(88,165,88)
+#define  GREEN_COLOR_2                 RGB(208,165,18)
+#define  PURPLE_COLOR                 RGB(189,16,206)
+#define  GRAY_COLOR                 RGB(173,156,173)
+#define  ORANGE_COLOR                 RGB(230,165,8)
+#define  NAVY_COLOR                 RGB(13,9,187)
+#define  GRIDLINE_COLOR                 RGB(7,95,12)
+#define  REDWINE_COLOR                 RGB(141,18,36)
+#define SYSTEM_COLOR    BLACK_COLOR //RGB(53,54,57)
+
+#define START_COLOR RGB(253,17,11)
+//#define  END_COLOR   RGB(252,234,12)
+#define  END_COLOR   RGB(252,234,200)
+
+//Socket data
+#define CMD_LENTH            4  //命令长度---字节
+#define PACKAGE_LENTH 1028 //数据包长度---字节
+#define PACKAGE_NUM     10 //数据包个数
+#define DATA_LENTH         (PACKAGE_LENTH-CMD_LENTH)//信号数据长度----字节
+#define  TOTLA_LENTH     DATA_LENTH*PACKAGE_NUM //完整的信号数据长度---字节
+
+//全局缓冲
+#define PERMODULE_DATA_LENTH     (TOTLA_LENTH/2)//每个数据块数据个数---两个字节组合成一个有效数据
+#define PINGPONG  2//0-Ping缓冲区，1-Pong缓冲区
+
+//module
+//#define AREA_BLOCK_NUM 16  //平均温度区域个数,划分16个区域
+#define ARM_NUM  5//8//ARM模块个数
+//#define PATH_NUM 24 //总共24条路径
+#define SOUNDDEV_NUM  5//5//需要发声设备的个数
+#define AREA_BLOCK_NUM 12 
+//#define ARM_NUM 4//4//ARM模块个数  增加一个吹扫气控制 4+1=5
+#define PATH_NUM 16 //总共5条路径
+//#define SOUNDDEV_NUM  4//需要发声设备的个数
+#define MAX_DELAY  10000//等待串口数据延时
+#define SOUND_TIMES 5  //每个模块的发生次数
+#define  SIDETEMP   1000 //边界温度
+
+//温度场网格数据
+#define GRID_ROW_NUM   31 //网格数据31行
+#define GRID_COLUMN_NUM 51 //51列
+
+//重构算法
+#define N_ARRAY 5120
+#define N_DATALENTH TOTLA_LENTH
+
+// 界面显示分辨率
+#define RESOLUTION_X  1920.0f //定义系统显示最合适的分辨率
+#define RESOLUTION_Y  1080.0f 
+#define XCOFF  (GetSystemMetrics(SM_CXSCREEN)/RESOLUTION_X) //不同分辨率时的系数
+#define YCOFF  (GetSystemMetrics(SM_CYSCREEN)/RESOLUTION_Y)
+
+#define SAMPLE_DATA_NUM       4096
+#define PI 3.1415926535897932
+
+#define ERROR_READINI -1
+
+typedef enum _ERROR_MYSQL{
+	NO_MYSQL_ERROR = 0,
+	ERROR_MYSQL_INIT = -1,
+	ERROR_MYSQL_CONNECT = -2,
+	ERROR_MYSQL_READ = -3,
+	ERROR_MYSQL_WRITE = -4,
+	ERROR_MYSQL_DELETE = -5,
+}ERROR_MYSQL;
+
+typedef struct  _StartEndTime
+{
+	time_t startTIme;
+	time_t endTime;
+}StartEndTime;
+
+//温度场网格数据信息
+typedef struct _GridBaiscInfo{
+	UINT row; //行
+	UINT col;//列
+	float width;//宽
+	float hight;//高
+	float maxValue;//最大值
+	float minValue;//最小值
+}GridBaiscInfo;
+
+//记录一条等值线上的坐标
+typedef struct _ContourPoint{
+	float x;
+	float y;
+}ContourPoint;
+
+
+typedef struct _PathSendReceiveModule{
+	UINT iSendModule;
+	UINT iReveiveModule;
+}PathSendReceiveModule;
+
+//区域平均温度阀值设置
+typedef struct _AreaTParaSet{
+	int iLowTLimit;
+	int iHighTLimit;
+}AreaTParaSet;
+
+//路径对应的两个ARM模块
+//const PathSendReceiveModule gPathOrder[PATH_NUM]={{1,3},{1,4},{1,5},{1,6},{1,7},{1,8}, //ARM1发声
+//{2,3},{2,4},{2,5},{2,6},{2,7},{2,8}, //ARM2发声
+//{3,5},{3,6},{3,7},{3,8}, //ARM3发声
+//{4,5},{4,6},{4,7},{4,8}, //ARM4发声
+//{5,7},{5,8}, //ARM5发声
+//{6,7},{6,8}}; //ARM6发声
+const PathSendReceiveModule gPathOrder[PATH_NUM] =
+{
+	{ 1, 1 }, { 1, 2 }, { 1, 3 }, { 1, 4 }, //ARM1发声
+	{ 2, 1 }, { 2, 2 }, { 2, 3 }, { 2, 4 }, //ARM2发声
+	{ 3, 1 }, { 3, 2 }, { 3, 3 }, { 3, 4 }, //ARM3发声
+	{ 4, 1 }, { 4, 2 }, { 4, 3 }, { 4, 4 }  //ARM4发声
+};
+
+//路径对应ARM模块存储的数据--飞渡时间使用的数据
+const UINT PathUseArmDataOrder[28] = { 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 5, 5, 6 };
+
+
+///////////////////////////通过TCP/IP接收到的数据/////////////////////////////////////////////
+#define  VDD   3000.0f   //mv
+#define   vCoff  (VDD/4096.0f)    //数据转换公式：v=data*(VDD/4096)
+#if 1
+
+#define  _DEBUG_PROJECT
+#define DEBUG_ISOTHERM
+
+#endif
+
+const POINT LEDALARM_ORPOINT = { 900, 20 };//报警：疲劳，总损耗，超温
+const POINT LEDFAULT_ORPOINT = { 1000, 20 };//故障
+
+///////////////////////////////////////////////////////主界面各个区域大小/////////////////////////////////////////////////////////////////////////////
+#pragma warning(disable:4244)
+const RECT  Logo_Rect = { 0, 0, 714 * XCOFF, 184 * YCOFF };//Logo大小
+const RECT  BoilerPos_Rect = { 0, 270 * YCOFF, 350 * XCOFF, 820 * YCOFF };//锅炉声波测点布置区域图示大小
+const RECT  ArmModule_Rect = { 630 * XCOFF, 5 * YCOFF, 1150 * XCOFF, 585 * YCOFF };//ARM模块区域图示大小
+const RECT  ArmModule1_Rect = { 630 * XCOFF, 100 * YCOFF, 1150 * XCOFF, 300 * YCOFF };//ARM模块区域图示大小
+const RECT  ArmModule2_Rect = { 630 * XCOFF, 380 * YCOFF, 1150 * XCOFF, 580 * YCOFF };//ARM模块区域图示大小
+const RECT  Isotherm_Rect = { 1182 * XCOFF, 34 * YCOFF, 1880 * XCOFF, 490 * YCOFF };//温度场区域图示大小
+const RECT  ValvePipe_Rect = { 50 * XCOFF, 200 * YCOFF, 1150 * XCOFF, 900 * YCOFF };//电磁阀管道区域图示大小
+const RECT  AreaT_Rect = { 1182 * XCOFF, 520 * YCOFF, 1880 * XCOFF, 920 * YCOFF };//平均温度区域图示大小
+
+
+
+const POINT  Led_Point = { 310 * XCOFF, 533 * YCOFF };
+const POINT  MainLed_Point = { 560 * XCOFF, 500 * YCOFF };
+#define W_ARMS   (30*XCOFF)//两个ARM模块在图片之间的距离left
+#define H_ARMS   (280*YCOFF)//两个ARM模块在图片之间的距离top
+
+/////////////////////////////////////////////////////子界面显示区域大小/////////////////////////////////////////////////////////////////////////////////////////////////
+const RECT  PointPos_Rect = { 10 * XCOFF, 10 * YCOFF, 1910 * XCOFF, 920 * YCOFF };//测点位置界面
+const RECT  AverageT_Rect = { 10 * XCOFF, 10 * YCOFF, 1900 * XCOFF, 930 * YCOFF };//区域平均温度界面
+const RECT  TrendT_Rect = { 150 * XCOFF, 10 * YCOFF, 1900 * XCOFF, 930 * YCOFF };//区域平均温度实时趋势界面
+const RECT  QueryT_Rect = { 100 * XCOFF, 100 * YCOFF, 1800 * XCOFF, 860 * YCOFF };//温度信息查询界面
+const RECT  Signal_Rect = { 150 * XCOFF, 20 * YCOFF, 1800 * XCOFF, 460 * YCOFF };//时域界面
+const RECT  Signal_Rect2 = { 150 * XCOFF, 470 * YCOFF, 1800 * XCOFF, 930 * YCOFF };//时域界面
+const RECT  IsothermT_Rect = { 80 * XCOFF, 10 * YCOFF, 1880 * XCOFF, 950 * YCOFF };//温度场界面

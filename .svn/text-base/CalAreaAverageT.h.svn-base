@@ -1,0 +1,21 @@
+#pragma once
+#include "Algorithm/DataClass.h"
+#include "Algorithm/TravelTime.h"
+#include "Algorithm/TempField.h"
+
+class CCalAreaAverageT
+{
+public:
+	CCalAreaAverageT(void);
+	~CCalAreaAverageT(void);
+public:
+	DataClass m_ProcessData;         //定义数据处理类，包括滤波等数据处理算法
+	TravelTime m_CalFlightTime;       //定义飞渡计算类
+	TempField m_CalAreaT;              //定义温度场计算类
+public:
+	void InitPara(); //初始化参数
+	void PreProcessData(int* dataIn,float* dataOut);// 数据预处理
+	float CalFlightTime(float** fOnePairData ,int iDataLenth);//计算飞渡时间
+	void CalAverageT(float** fFlightTime,int iPathNum,float* fCalTResult,int iAreaNum);//计算区域平均温度
+};
+

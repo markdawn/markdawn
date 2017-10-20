@@ -1,0 +1,21 @@
+#include "StdAfx.h"
+#include "PathAverageT.h"
+
+
+CPathAverageT::CPathAverageT(void)
+{
+}
+
+
+CPathAverageT::~CPathAverageT(void)
+{
+}
+
+
+// 计算路径平均温度
+float CPathAverageT::CalPerPathAverageT(int* masterData, int* slaveData, UINT length)
+{
+	return 0;
+}
+
+//计算飞渡时间

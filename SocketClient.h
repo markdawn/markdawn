@@ -1,0 +1,84 @@
+#pragma once
+#include "commonFile.h"
+
+
+
+typedef struct _Package{
+	BYTE cmd[CMD_LENTH];
+	BYTE data[DATA_LENTH];
+}Package;
+
+
+
+class CSocketClient
+{
+public:
+	CSocketClient(void);
+	~CSocketClient(void);
+
+public:
+	//work state 
+	BOOL IsOpen() const;	// Is Socket valid?
+	BOOL IsStart() const;	// Is Thread started?
+	BOOL IsRecvOver() const;// is data recv over?
+	BOOL IsStartTransData()const;//Is data ready to be transmitted?
+	void SetRecvDataOver(BOOL bOver);
+	void SetStartTransData(BOOL bOver);
+public:
+	//socket
+//	BOOL InitSocket(); //初始化套接字环境
+	BOOL SetBuffSize(SOCKET sock);//设置套接字缓冲区大小
+	BOOL CreateSocket(DWORD dwIP,u_short usPort,int iRetryTimes);//创建套接字，连接服务器
+	BOOL Connect(SOCKET sock, DWORD dwIP,u_short usPort,int iRetryTimes);//连接服务器
+	void CloseCommunicate();//关闭套接字
+	//thread
+	BOOL WatchCommunicate();//创建通信监测线程
+	virtual void Run(); //完成数据接收
+
+	//event
+//	virtual void OnEvent(UINT uEvent);
+	void OnEvent(UINT uEvent);
+	//data
+	int ReadSocket(LPBYTE lpBuffer, DWORD dwSize, DWORD dwTimeout);//读网络端口数据
+	int WriteSocket(const LPBYTE lpBuffer, DWORD dwCount, DWORD dwTimeout);//写网络端口数据
+	int OnDataReceived(LPBYTE lpBuffer, DWORD dwCount); //将接收到的数据传递给主线程使用
+	int OnSendSampleCmd();
+	int OnSendTransDataCmd();
+	int OnSendGasCtrlCmd(int iOrder);
+	UINT m_nPackageCounter; //包裹计数器
+protected:
+	static UINT WINAPI SocketThreadProc(LPVOID pParam); //线程函数
+
+protected:
+	SOCKET m_SocketClient; 
+	int m_iErrorCode; //错误码
+	HANDLE m_hSocketThread;//线程句柄
+	volatile BOOL m_bRecvDataOver;//标记一次完整的数据传输完毕
+
+	BOOL m_bRecvOK[PACKAGE_NUM];//标记每个数据包接收ok
+	volatile BOOL m_bTransDataFlag;//开始传输数据标记
+
+protected:
+	unsigned char* m_totalBuffer;
+	void CopyDataIntoBuffer(LPBYTE ucData,LPBYTE ucBuffer,int iNumOfData,int offset);
+public:
+	unsigned char* GetDataBuffer();//得到每一次发声时所存储的数据
+	void SetTheModuleID(UINT id);//设置套接字接收数据对应的ARM模块ID序号1~8
+	UINT GetTheModuleID();//得到ID
+private:
+	UINT m_uID;//记录对应与其通信的ARM序号
+};
+
+#define BUF_TIMES 10  //为每个套接字分配80k
+//#define NO_ERROR 0  //没有错误
+
+// Event value
+
+#define EVT_CONSUCCESS		0x0000	// Connection established
+#define EVT_CONFAILURE		0x0001	// General failure - Wait Connection failed
+#define EVT_CONDROP			0x0002	// Connection dropped
+#define EVT_ZEROLENGTH		0x0003	// Zero length message
+#define EVT_READFAILED       0x0004  // Receiving data failed
+#define EVT_SENDFAILED       0x0004  // Sending data failed
+#define EVT_TRANSOVER        0x0005//Receiving data is over
+

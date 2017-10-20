@@ -1,0 +1,139 @@
+// ToolDlgBar.cpp : implementation file
+//
+
+#include "stdafx.h"
+#include "AcousticTherm.h"
+#include "ToolDlgBar.h"
+#include "afxdialogex.h"
+#include "commonFile.h"
+#include "MainFrm.h"
+
+// CToolDlgBar dialog
+
+IMPLEMENT_DYNAMIC(CToolDlgBar, CDialogBar)
+
+CToolDlgBar::CToolDlgBar()
+{
+	m_bFaultFlag = FALSE;
+	m_bAlarmFlag = FALSE;
+}
+
+
+CToolDlgBar::~CToolDlgBar()
+{
+}
+
+void CToolDlgBar::DoDataExchange(CDataExchange* pDX)
+{
+	DDX_Control(pDX, IDC_LED_ALARM, m_ledAlarm);
+	DDX_Control(pDX, IDC_LED_FAULT, m_ledFault);
+	CDialogBar::DoDataExchange(pDX);
+}
+
+
+BEGIN_MESSAGE_MAP(CToolDlgBar, CDialogBar)
+	ON_WM_PAINT()
+	ON_MESSAGE(WM_INITDIALOG, OnInitDialog )    // <-- Add this line.
+	ON_WM_TIMER()
+END_MESSAGE_MAP()
+
+
+// CToolDlgBar message handlers
+
+
+void CToolDlgBar::OnPaint()
+{
+	CPaintDC dc(this); // device context for painting
+	// TODO: Add your message handler code here
+	// Do not call CDialogBar::OnPaint() for painting messages
+	CRect rect1;
+	GetWindowRect(rect1);
+	ScreenToClient(rect1);	
+	dc.FillSolidRect(&rect1,BACKGROUND_COLOR);//设置你需要的颜色
+}
+
+LONG CToolDlgBar::OnInitDialog ( UINT wParam, LONG lParam)
+{
+	BOOL bRet = HandleInitDialog(wParam, lParam);
+
+	if (!UpdateData(FALSE))
+	{
+		TRACE0("Warning: UpdateData failed during dialog init.\n");
+	}
+	//报警LED
+	CRect rRectLed,rTmpRect;
+	m_ledAlarm.GetClientRect(rTmpRect);
+	rRectLed.left = LEDALARM_ORPOINT.x*XCOFF;
+	rRectLed.top = LEDALARM_ORPOINT.y*YCOFF;
+	rRectLed.right = rRectLed.left+rTmpRect.Width();
+	rRectLed.bottom = rRectLed.top+rTmpRect.Height();
+	m_ledAlarm.MoveWindow(rRectLed);
+
+	//故障LED
+	m_ledFault.GetClientRect(rTmpRect);
+	rRectLed.left = LEDFAULT_ORPOINT.x*XCOFF;
+	rRectLed.top = LEDFAULT_ORPOINT.y*YCOFF;
+	rRectLed.right = rRectLed.left+rTmpRect.Width();
+	rRectLed.bottom = rRectLed.top+rTmpRect.Height();
+	m_ledFault.MoveWindow(rRectLed);
+
+	m_ledAlarm.SetLed(CLed::LED_COLOR_RED,CLed::LED_OFF,CLed::LED_ROUND);   //自动吹扫指示灯
+	m_ledFault.SetLed(CLed::LED_COLOR_RED,CLed::LED_OFF,CLed::LED_ROUND);   //自动吹扫指示灯
+
+//	SetTimer(2,LEDTIMER,NULL); //报警
+//	SetTimer(3,LEDTIMER,NULL);//故障
+	return bRet;
+}
+
+
+void CToolDlgBar::OnTimer(UINT_PTR nIDEvent)
+{
+	// TODO: Add your message handler code here and/or call default
+	CMainFrame *pWnd=(CMainFrame *)AfxGetMainWnd();
+	if(!pWnd)
+		return ;
+//	BOOL bAlarmFlag =TRUE;
+	if (nIDEvent == 2)
+	{
+		if(m_bAlarmFlag)
+		{
+			m_ledAlarm.Ping(200);
+		}
+		else
+			m_ledAlarm.SetLed(CLed::LED_COLOR_RED,CLed::LED_OFF,CLed::LED_ROUND);
+	}
+
+	if (nIDEvent == 3)
+	{
+		if(m_bFaultFlag)
+		{
+			m_ledFault.Ping(200);
+		}
+		else
+			m_ledFault.SetLed(CLed::LED_COLOR_RED,CLed::LED_OFF,CLed::LED_ROUND);
+	}
+
+
+	CDialogBar::OnTimer(nIDEvent);
+}
+
+//ms
+void CToolDlgBar::StartTimer(UINT_PTR nIDEvent ,UINT nElapse)
+{
+	SetTimer(nIDEvent,nElapse,NULL); //报警
+}
+
+void CToolDlgBar::StopTimer(UINT_PTR nIDEvent )
+{
+	KillTimer(nIDEvent);
+}
+
+void CToolDlgBar::SetFaultFlag(BOOL bFlag)
+{
+	m_bFaultFlag = bFlag;
+}
+
+void CToolDlgBar::SetAlarmFlag(BOOL bFlag)
+{
+	m_bAlarmFlag = bFlag;
+}
